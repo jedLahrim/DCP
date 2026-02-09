@@ -37,4 +37,6 @@ abstract class IStorageProvider {
   /// final userKeys = await storage.list('user:');
   /// ```
   Future<List<String>> list([String prefix]);
+
+  Future<int> usage();
 }

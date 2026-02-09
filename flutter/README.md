@@ -32,14 +32,19 @@ import 'package:dcp_client/dcp_client.dart';
 
 void main() async {
   final client = DCPClient(
-    config: DCPConfig(apiEndpoint: 'https://api.myapp.com'),
+    config: DCPConfig(storageLimit: DCPStorageLimit.unlimited),
   );
 
   await client.init();
 
-  // Write data (Metadata - Stored in SQLite, valid for >5GB)
-  await client.write('user:1', {'name': 'Alice', 'bio': '...'});
-
+  // Write data (Metadata - Stored in SQLite)
+  // Throws exception if storage limit is exceeded
+  try {
+    await client.write('user:1', {'name': 'Alice', 'bio': '...'});
+    await client.write('settings', ['dark_mode', 'notifications']);
+  } catch (e) {
+    print('Storage limit reached: $e');
+  }
   // Download Large Asset (Video/Image - Stored in File System, valid for >4GB)
   try {
     final localPath = await client.downloadAsset('https://example.com/huge-video.mp4', customId: 'video-123');

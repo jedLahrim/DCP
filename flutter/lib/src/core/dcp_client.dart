@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
@@ -7,16 +8,39 @@ import '../storage/file_storage.dart';
 import '../storage/i_storage_provider.dart';
 import '../storage/sqlite_storage.dart';
 
+enum DCPStorageLimit {
+  limit1GB,
+  limit5GB,
+  limit10GB,
+  limit50GB,
+  unlimited,
+}
+
 class DCPConfig {
-  final String apiEndpoint;
+  final DCPStorageLimit storageLimit;
   final Duration syncInterval;
   final bool enableAnalytics;
 
   DCPConfig({
-    required this.apiEndpoint,
+    this.storageLimit = DCPStorageLimit.unlimited,
     this.syncInterval = const Duration(seconds: 30),
     this.enableAnalytics = false,
   });
+
+  int get byteLimit {
+    switch (storageLimit) {
+      case DCPStorageLimit.limit1GB:
+        return 1024 * 1024 * 1024;
+      case DCPStorageLimit.limit5GB:
+        return 5 * 1024 * 1024 * 1024;
+      case DCPStorageLimit.limit10GB:
+        return 10 * 1024 * 1024 * 1024;
+      case DCPStorageLimit.limit50GB:
+        return 50 * 1024 * 1024 * 1024;
+      case DCPStorageLimit.unlimited:
+        return -1;
+    }
+  }
 }
 
 class DCPClient {
@@ -53,6 +77,16 @@ class DCPClient {
 
   /// Stores any JSON-encodable data (Map, List, Object with toJson)
   Future<void> write(String key, dynamic value) async {
+    if (config.storageLimit != DCPStorageLimit.unlimited) {
+      final usage = await _metadataStorage.usage();
+      // Estimate new size (rough JSON string length)
+      final newSize = jsonEncode(value).length;
+
+      if (usage + newSize > config.byteLimit) {
+        throw Exception('DCP Storage Limit Exceeded (${config.storageLimit}). Usage: $usage bytes');
+      }
+    }
+
     final record = {
       'data': value,
       '_metadata': {

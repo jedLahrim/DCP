@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -20,6 +21,10 @@ class SqliteStorage implements IStorageProvider {
       path,
       version: 1,
       onCreate: (db, version) async {
+        // Store keys as TEXT and values as JSON TEXT (BLOB is also possible for raw bytes)
+        // Using TEXT for JSON compatibility and debuggability.
+        // SQLite supports up to 1GB per row (usually depending on limits),
+        // but for unlimited size, we rely on the file system limit of the DB file.
         await db.execute('CREATE TABLE entity (key TEXT PRIMARY KEY, value TEXT)');
       },
     );
@@ -81,5 +86,19 @@ class SqliteStorage implements IStorageProvider {
     );
 
     return maps.map((e) => e['key'] as String).toList();
+  }
+
+  Future<int> usage() async {
+    try {
+      final databasesPath = await getDatabasesPath();
+      final path = join(databasesPath, dbName);
+      final file = File(path);
+      if (await file.exists()) {
+        return await file.length();
+      }
+      return 0;
+    } catch (e) {
+      return 0;
+    }
   }
 }
