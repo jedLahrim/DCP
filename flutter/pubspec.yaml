@@ -1,0 +1,19 @@
+name: dcp_client
+description: A Dart client for the Dart Connect Protocol (DCP), an offline-first synchronization protocol.
+version: 0.0.1
+homepage: https://github.com/yourusername/dcp
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # Recommended dependencies for full implementation
+  # hive: ^2.2.3
+  # connectivity_plus: ^5.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
