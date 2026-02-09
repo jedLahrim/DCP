@@ -32,7 +32,7 @@ import 'package:dcp_client/dcp_client.dart';
 
 void main() async {
   final client = DCPClient(
-    config: DCPConfig(storageLimit: DCPStorageLimit.unlimited),
+    config: DCPConfig(storageLimit: DCPStorageLimit.limit10GB),
   );
 
   await client.init();
