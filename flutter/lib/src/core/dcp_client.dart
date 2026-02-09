@@ -100,8 +100,16 @@ class DCPClient {
 
   /// Reads a document as type T (e.g., Map, List, or custom class)
   Future<T?> read<T>(String key) async {
-    final data = await _metadataStorage.get(key);
-    if (data == null) return null;
+    final record = await _metadataStorage.get(key);
+    if (record == null) return null;
+
+    dynamic data;
+    // record is the whole map {data, _metadata}
+    if (record.containsKey('data')) {
+      data = record['data'];
+    } else {
+      data = record;
+    }
 
     try {
       return data as T?;
