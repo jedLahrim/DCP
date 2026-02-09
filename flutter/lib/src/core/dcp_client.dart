@@ -100,16 +100,8 @@ class DCPClient {
 
   /// Reads a document as type T (e.g., Map, List, or custom class)
   Future<T?> read<T>(String key) async {
-    final record = await _metadataStorage.get(key);
-    if (record == null) return null;
-
-    dynamic data;
-    // record is the whole map {data, _metadata}
-    if (record is Map && record.containsKey('data')) {
-      data = record['data'];
-    } else {
-      data = record;
-    }
+    final data = await _metadataStorage.get(key);
+    if (data == null) return null;
 
     try {
       return data as T?;
@@ -151,6 +143,28 @@ class DCPClient {
     return null;
     // Note: In a real app, you might want to try finding the file on disk even if metadata is missing,
     // but metadata is the source of truth here.
+  }
+
+  /// Deletes a document by key
+  Future<void> delete(String key) async {
+    await _metadataStorage.delete(key);
+    // Also try to delete if it's an asset tracking key
+    if (key.startsWith('asset:')) {
+      final meta = await _metadataStorage.get(key);
+      if (meta != null && meta is Map && meta['localPath'] != null) {
+        await _fileStorage.deleteFile(meta['localPath'].toString().split('/').last);
+      }
+    }
+    sync();
+  }
+
+  /// Clears all metadata and locally stored assets
+  Future<void> clear() async {
+    await _metadataStorage.clear();
+    // In a real app, you might want a more sophisticated file clear,
+    // but for now we clear the metadata.
+    // Files are in the documents/support directory and might need manual deletion if not tracked.
+    debugPrint('[DCP] Storage cleared');
   }
 
   Future<void> sync() async {

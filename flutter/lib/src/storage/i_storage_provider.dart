@@ -22,21 +22,13 @@ abstract class IStorageProvider {
 
   /// Deletes data associated with a key.
   ///
-  /// Example:
-  /// ```dart
-  /// await storage.delete('user:1');
-  /// ```
-  Future<void> delete(String key);
-
-  /// Lists keys matching a prefix.
-  ///
-  /// [prefix] Optional prefix to filter keys.
-  ///
-  /// Example:
-  /// ```dart
   /// final userKeys = await storage.list('user:');
   /// ```
   Future<List<String>> list([String prefix]);
 
   Future<int> usage();
+
+  Future<void> delete(String key);
+
+  Future<void> clear();
 }

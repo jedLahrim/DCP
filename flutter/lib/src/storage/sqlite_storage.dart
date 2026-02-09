@@ -58,12 +58,18 @@ class SqliteStorage implements IStorageProvider {
 
   @override
   Future<void> delete(String key) async {
-    if (_db == null) await init();
+    if (_db == null) throw Exception('Database not initialized');
     await _db!.delete(
       'entity',
       where: 'key = ?',
       whereArgs: [key],
     );
+  }
+
+  @override
+  Future<void> clear() async {
+    if (_db == null) throw Exception('Database not initialized');
+    await _db!.delete('entity');
   }
 
   @override
