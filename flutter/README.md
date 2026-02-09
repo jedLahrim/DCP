@@ -22,7 +22,7 @@ dependencies:
   path: ^1.9.0
   path_provider: ^2.1.1
   dio: ^5.3.3
-  connectivity_plus: ^5.0.0
+  connectivity_plus: ^6.0.5
 ```
 
 ## Usage

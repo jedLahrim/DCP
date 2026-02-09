@@ -117,15 +117,15 @@
     },
     {
       "name": "connectivity_plus",
-      "rootUri": "file:///Users/jed/.pub-cache/hosted/pub.dev/connectivity_plus-5.0.2",
+      "rootUri": "file:///Users/jed/.pub-cache/hosted/pub.dev/connectivity_plus-6.1.5",
       "packageUri": "lib/",
-      "languageVersion": "2.18"
+      "languageVersion": "3.2"
     },
     {
       "name": "connectivity_plus_platform_interface",
-      "rootUri": "file:///Users/jed/.pub-cache/hosted/pub.dev/connectivity_plus_platform_interface-1.2.4",
+      "rootUri": "file:///Users/jed/.pub-cache/hosted/pub.dev/connectivity_plus_platform_interface-2.0.1",
       "packageUri": "lib/",
-      "languageVersion": "2.12"
+      "languageVersion": "2.18"
     },
     {
       "name": "convert",
@@ -614,7 +614,7 @@
       "languageVersion": "3.0"
     }
   ],
-  "generated": "2026-02-09T17:23:37.266027Z",
+  "generated": "2026-02-09T17:45:22.772551Z",
   "generator": "pub",
   "generatorVersion": "3.7.2",
   "flutterRoot": "file:///Users/jed/development/flutter",

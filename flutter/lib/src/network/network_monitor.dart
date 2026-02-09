@@ -9,34 +9,32 @@ class NetworkMonitor {
   final _qualityController = StreamController<NetworkQuality>.broadcast();
 
   NetworkMonitor() {
-    _connectivity.onConnectivityChanged.listen(_updateStatus);
+    // connectivity_plus 6.x returns a Stream of List<ConnectivityResult>
+    _connectivity.onConnectivityChanged.listen((List<ConnectivityResult> results) {
+      _updateStatus(results);
+    });
     _checkInitialStatus();
   }
 
   Stream<NetworkQuality> get onQualityChange => _qualityController.stream;
 
   Future<void> _checkInitialStatus() async {
-    final result = await _connectivity.checkConnectivity();
-    _updateStatus(result);
+    // connectivity_plus 6.x returns Future<List<ConnectivityResult>>
+    final List<ConnectivityResult> results = await _connectivity.checkConnectivity();
+    _updateStatus(results);
   }
 
-  void _updateStatus(ConnectivityResult result) {
-    // Basic mapping: WiFi/Ethernet -> Good, Mobile -> Moderate/Poor (simulated)
-    // In a real app, you'd ping a server to measure latency/throughput.
-    NetworkQuality quality;
-    switch (result) {
-      case ConnectivityResult.wifi:
-      case ConnectivityResult.ethernet:
-        quality = NetworkQuality.good;
-        break;
-      case ConnectivityResult.mobile:
-        quality = NetworkQuality.moderate;
-        break;
-      case ConnectivityResult.none:
-      default:
-        quality = NetworkQuality.offline;
-        break;
+  void _updateStatus(List<ConnectivityResult> results) {
+    NetworkQuality quality = NetworkQuality.offline;
+
+    if (results.contains(ConnectivityResult.wifi) || results.contains(ConnectivityResult.ethernet)) {
+      quality = NetworkQuality.good;
+    } else if (results.contains(ConnectivityResult.mobile)) {
+      quality = NetworkQuality.moderate;
+    } else if (results.isEmpty || results.contains(ConnectivityResult.none)) {
+      quality = NetworkQuality.offline;
     }
+
     _qualityController.add(quality);
   }
 }
