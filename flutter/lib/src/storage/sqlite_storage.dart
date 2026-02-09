@@ -32,7 +32,7 @@ class SqliteStorage implements IStorageProvider {
 
   @override
   Future<void> put(String key, dynamic value) async {
-    if (_db == null) throw Exception('Database not initialized');
+    if (_db == null) await init();
     // jsonEncode calls toJson() on custom objects automatically
     await _db!.insert(
       'entity',
@@ -43,7 +43,7 @@ class SqliteStorage implements IStorageProvider {
 
   @override
   Future<dynamic> get(String key) async {
-    if (_db == null) throw Exception('Database not initialized');
+    if (_db == null) await init();
     final List<Map<String, dynamic>> maps = await _db!.query(
       'entity',
       where: 'key = ?',
@@ -58,7 +58,7 @@ class SqliteStorage implements IStorageProvider {
 
   @override
   Future<void> delete(String key) async {
-    if (_db == null) throw Exception('Database not initialized');
+    if (_db == null) await init();
     await _db!.delete(
       'entity',
       where: 'key = ?',
@@ -68,7 +68,7 @@ class SqliteStorage implements IStorageProvider {
 
   @override
   Future<List<String>> list([String prefix = '']) async {
-    if (_db == null) throw Exception('Database not initialized');
+    if (_db == null) await init();
 
     String? whereClause;
     List<dynamic>? whereArgs;
