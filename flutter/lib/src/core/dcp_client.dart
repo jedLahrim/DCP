@@ -98,16 +98,25 @@ class DCPClient {
     sync();
   }
 
-  /// Reads a document (returns Map, List, or dynamic)
-  Future<dynamic> read(String key) async {
+  /// Reads a document as type T (e.g., Map, List, or custom class)
+  Future<T?> read<T>(String key) async {
     final record = await _metadataStorage.get(key);
     if (record == null) return null;
 
-    // record is the whole map {data, _metadata} (as map)
+    dynamic data;
+    // record is the whole map {data, _metadata}
     if (record is Map && record.containsKey('data')) {
-      return record['data'];
+      data = record['data'];
+    } else {
+      data = record;
     }
-    return record;
+
+    try {
+      return data as T?;
+    } catch (e) {
+      debugPrint('[DCP] Type mismatch for key "$key". Expected $T but found ${data.runtimeType}');
+      return null;
+    }
   }
 
   /// Downloads and stores a large file (e.g. video/image)

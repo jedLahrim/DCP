@@ -41,6 +41,11 @@ void main() async {
   // Throws exception if storage limit is exceeded
   try {
     await client.write('user:1', {'name': 'Alice', 'bio': '...'});
+    // Read data with generic type
+    final user = await client.read<Map<String, dynamic>>('user:1');
+    if (user != null) {
+      print('Hello, ${user['name']}');
+    }
     await client.write('settings', ['dark_mode', 'notifications']);
   } catch (e) {
     print('Storage limit reached: $e');
