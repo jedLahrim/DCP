@@ -1,6 +1,6 @@
 name: dcp_client
 description: A Dart client for the Dart Connect Protocol (DCP), an offline-first synchronization protocol.
-version: 0.0.3
+version: 0.0.4
 homepage: https://github.com/jedLahrim/DCP.git
 
 environment:
