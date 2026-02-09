@@ -1,20 +1,20 @@
-import { IDCPConfig, IStorageProvider, INetworkMonitor, NetworkMode } from '../interfaces';
-import { InMemoryStorage } from '../storage/InMemoryStorage';
-import { BrowserStorage } from '../storage/BrowserStorage';
-import { NetworkMonitor } from '../network/NetworkMonitor';
-import { SyncQueue } from '../sync/SyncQueue';
-import { SyncEngine } from '../sync/SyncEngine';
-import { ResourceManager } from '../resources/ResourceManager';
+import {IDCPConfig, IStorageProvider, NetworkMode} from '../interfaces';
+import {InMemoryStorage} from '../storage/InMemoryStorage';
+import {BrowserStorage} from '../storage/BrowserStorage';
+import {NetworkMonitor} from '../network/NetworkMonitor';
+import {SyncQueue} from '../sync/SyncQueue';
+import {SyncEngine} from '../sync/SyncEngine';
+import {ResourceManager} from '../resources/ResourceManager';
 
 /**
  * Core DCP Client
  */
 export class DCPClient {
+    storage: IStorageProvider;
     private config: IDCPConfig;
-    private storage: IStorageProvider;
-    private network: NetworkMonitor; // Use concrete class to access getQuality
+    private readonly network: NetworkMonitor; // Use concrete class to access getQuality
     private syncEngine: SyncEngine;
-    private syncQueue: SyncQueue;
+    private readonly syncQueue: SyncQueue;
     private resourceManager: ResourceManager;
 
     constructor(config: IDCPConfig) {

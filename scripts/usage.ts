@@ -1,5 +1,4 @@
-import { DCPClient } from '../src/core/DCPClient';
-import { IDCPConfig } from '../src/interfaces';
+import {DCPClient, IDCPConfig} from '../src';
 
 const config: IDCPConfig = {
     syncIntervalMs: 5000,
@@ -16,8 +15,8 @@ async function main() {
     const client = new DCPClient(config);
     await client.init();
 
-    const storage = (client as any).storage; // accessing private for demo
-    await storage.put('demo-key', { message: 'Hello DCP World!' });
+    const storage = client.storage; // accessing private for demo
+    await storage.put('demo-key', {message: 'Hello DCP World!'});
 
     const value = await storage.get('demo-key');
     console.log('Retrieved from storage:', value);

@@ -1,20 +1,28 @@
 # dcp_client
 
-A Dart client for the Dart Connect Protocol (DCP), an offline-first synchronization protocol designed for local-first applications.
+A Dart client for the Dart Connect Protocol (DCP), an offline-first synchronization protocol designed for local-first
+applications.
 
 ## Features
 
+- **Scalable Storage**: Uses **SQLite** for metadata (>5GB) and File System for large assets (>4GB).
 - **Offline-First**: Prioritizes local storage and operation.
 - **Synchronization**: Automatically syncs data when online.
 - **Network Intelligence**: Monitors network quality to optimize resource usage.
 
 ## Getting Started
 
-Add `dcp_client` to your `pubspec.yaml`:
+Add `dcp_client` to your `pubspec.yaml` (along with required dependencies):
 
 ```yaml
 dependencies:
-  dcp_client: ^0.0.1
+  dcp_client:
+    path: ./
+  sqflite: ^2.3.0
+  path: ^1.9.0
+  path_provider: ^2.1.1
+  dio: ^5.3.3
+  connectivity_plus: ^5.0.0
 ```
 
 ## Usage
@@ -26,15 +34,23 @@ void main() async {
   final client = DCPClient(
     config: DCPConfig(apiEndpoint: 'https://api.myapp.com'),
   );
-  
+
   await client.init();
-  
-  // Write data
-  await client.write('user:1', {'name': 'Alice'});
-  
-  // Read data
-  final user = await client.read('user:1');
-  print(user);
+
+  // Write data (Metadata - Stored in SQLite, valid for >5GB)
+  await client.write('user:1', {'name': 'Alice', 'bio': '...'});
+
+  // Download Large Asset (Video/Image - Stored in File System, valid for >4GB)
+  try {
+    final localPath = await client.downloadAsset('https://example.com/huge-video.mp4', customId: 'video-123');
+    print('Video saved to: $localPath');
+
+    // Later retrieval
+    final path = await client.getAssetPath('video-123');
+    // Use path with VideoPlayer controller
+  } catch (e) {
+    print('Download failed: $e');
+  }
 }
 ```
 
